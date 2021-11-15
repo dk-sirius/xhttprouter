@@ -23,6 +23,10 @@ func (brmp *BaseRouterImp) Context(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "pingPong-base")
 }
 
+type PathObject struct {
+	Path string `path:"/test/basic"`
+}
+
 type BasicRouterImp struct {
 	xhttp.MethodGet
 	Path string `path:"/test/basic"`

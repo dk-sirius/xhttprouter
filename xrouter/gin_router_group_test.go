@@ -1,22 +1,20 @@
-package xrouter
+package xrouter_test
 
 import (
 	"net/http"
 	"testing"
 
 	"github.com/dk-sirius/xhttprouter/xhttp"
+	"github.com/dk-sirius/xhttprouter/xrouter"
 	"github.com/gin-gonic/gin"
 )
 
 type BaseRouterImp struct {
+	A string
 }
 
 func (brmp *BaseRouterImp) Method() string {
 	return http.MethodGet
-}
-
-func (brmp *BaseRouterImp) Path() string {
-	return "/test/base"
 }
 
 func (brmp *BaseRouterImp) Context(ctx *gin.Context) {
@@ -37,11 +35,10 @@ func (brmp *BasicRouterImp) Context(ctx *gin.Context) {
 }
 
 func TestRouterType(t *testing.T) {
-	root := NewRoot(gin.Default())
+	root := xrouter.NewRoot(gin.Default())
 	base := root.XGroup("/srv-test-base", &BaseRouterImp{})
 	base.XHandle(&BaseRouterImp{})
 
 	basic := root.XGroup("/srv-test-basic")
 	basic.XHandle(&BasicRouterImp{})
 }
-

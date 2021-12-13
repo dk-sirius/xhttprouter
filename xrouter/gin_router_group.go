@@ -18,7 +18,7 @@ func (rg *RouterGroup) XGroup(relativePath string, handlers ...interface{}) *Rou
 	tmpGroup := rg.group.Group(relativePath)
 	if len(handlers) > 0 {
 		for _, router := range handlers {
-			if rr, ok := router.(RouterContext); ok {
+			if rr, ok := router.(XContext); ok {
 				tmpGroup.Handlers = append(tmpGroup.Handlers, rr.Context)
 			} else {
 				panic("invalid router")
@@ -32,14 +32,11 @@ func (rg *RouterGroup) XGroup(relativePath string, handlers ...interface{}) *Rou
 
 func (rg *RouterGroup) XHandle(r interface{}) {
 	// context，http method
-	basicRouter, err := basicRoute(r)
+	basicRouter, err := validRoute(r)
 	if err != nil {
 		panic("invalid route")
 	}
 	// request path
-	relativePath, err := getPath(r)
-	if err != nil {
-		panic(err)
-	}
+	relativePath := getPath(r)
 	rg.group.Handle(basicRouter.Method(), relativePath, basicRouter.Context)
 }

@@ -4,34 +4,34 @@ import (
 	"fmt"
 )
 
-type BaseRouter interface {
+type PathRouter interface {
 	Path() string
-	Router
+	MethodRouter
 }
 
-type RouterContext interface {
+type XContext interface {
 	Context(ctx *Context)
 }
 
-type Router interface {
-	RouterContext
+type MethodRouter interface {
+	XContext
 	Method() string
 }
 
-func basicRoute(r interface{}) (Router, error) {
-	if route, ok := r.(Router); ok {
+func validRoute(r interface{}) (MethodRouter, error) {
+	if route, ok := r.(MethodRouter); ok {
 		return route, nil
 	}
 	return nil, fmt.Errorf("invalid route")
 }
 
-func getPath(r interface{}) (string, error) {
-	if baseRouter, ok := r.(BaseRouter); ok {
-		return baseRouter.Path(), nil
-	} else if _, ok := r.(Router); ok {
-		if p := Path(r); p != "" {
-			return p, nil
-		}
+func getPath(r interface{}) string {
+	switch rr := r.(type) {
+	case PathRouter:
+		return rr.Path()
+	case MethodRouter:
+		return Path(r)
+	default:
+		return ""
 	}
-	return "", fmt.Errorf("not found route path")
 }
